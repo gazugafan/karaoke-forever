@@ -8,6 +8,7 @@ node_modules/
 private/
 pretrained_models/
 tmp/
+data/
 
 .DS_Store
 *.log

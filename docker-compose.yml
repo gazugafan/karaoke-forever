@@ -5,3 +5,9 @@ services:
     build: .
     ports:
       - "3000:3000"
+    environment:
+      KF_SERVER_PATH_DATA: /usr/karaoke/data
+      NODE_OPTIONS: --max_old_space_size=2048
+    volumes:
+      - ./data:/usr/karaoke/data:rw
+      - ./tmp:/usr/karaoke/tmp:rw

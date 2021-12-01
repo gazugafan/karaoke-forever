@@ -2,7 +2,7 @@ const path = require('path')
 const baseDir = path.resolve(path.dirname(require.main.filename), '..')
 const env = {
   NODE_ENV: process.env.NODE_ENV,
-  KF_SERVER_PATH_DATA: baseDir,
+  KF_SERVER_PATH_DATA: process.env.KF_SERVER_PATH_DATA ? process.env.KF_SERVER_PATH_DATA : baseDir,
   KF_SERVER_PATH_ASSETS: path.join(baseDir, 'assets'),
   KF_SERVER_PATH_WEBROOT: path.join(baseDir, 'build'),
   KF_SERVER_URL_PATH: '/',
