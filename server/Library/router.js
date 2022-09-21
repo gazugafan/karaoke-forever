@@ -156,6 +156,7 @@ router.post('/youtubeidentify', async (ctx, next) => {
     // undefine circular stuff
     ctx.body.songs.forEach(song => {
       song.client = null
+      song.artist.client = null
     })
 
     console.log(ctx.body.songs)
