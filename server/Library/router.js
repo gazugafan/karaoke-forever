@@ -160,6 +160,8 @@ router.post('/youtubeidentify', async (ctx, next) => {
       song.artist = song.artist.name
     })
 
+    console.log(ctx.body.songs)
+
     // if a songID was provided, pick out just that song
     // it would be nice to search Genius just for that ID, but this would require a key
     if (ctx.request.body.songID) {
