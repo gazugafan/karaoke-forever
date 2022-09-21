@@ -180,9 +180,9 @@ router.post('/youtubeidentify', async (ctx, next) => {
     // if only one song was found (or a songID was provided), get the lyrics for it immediately...
     if (ctx.body.song) {
       try {
-        ctx.body.artist = ctx.body.songs[0].artist.name
-        ctx.body.title = ctx.body.songs[0].title
-        ctx.body.lyrics = await ctx.body.songs[0].lyrics()
+        ctx.body.artist = ctx.body.song.artist
+        ctx.body.title = ctx.body.song.title
+        ctx.body.lyrics = await ctx.body.song.lyrics()
       } catch (err) {
         /* just ignore and return empty lyrics */
       }
