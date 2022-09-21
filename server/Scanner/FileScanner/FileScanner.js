@@ -189,7 +189,7 @@ class FileScanner extends Scanner {
     // new media
     // ---------
     media.dateAdded = Math.round(new Date().getTime() / 1000) // seconds
-    log.info('  => new: %s', JSON.stringify(match, jsonCircularReplacer()))
+    log.info('  => new: %s', JSON.stringify(match))
 
     return {
       mediaId: await IPC.req({ type: MEDIA_ADD, payload: media }),
@@ -221,18 +221,5 @@ class FileScanner extends Scanner {
     return invalidMedia.length
   }
 }
-
-const jsonCircularReplacer = () => {
-  const seen = new WeakSet();
-  return (key, value) => {
-    if (typeof value === 'object' && value !== null) {
-      if (seen.has(value)) {
-        return;
-      }
-      seen.add(value);
-    }
-    return value;
-  };
-};
 
 module.exports = FileScanner
