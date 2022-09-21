@@ -156,6 +156,7 @@ router.post('/youtubeidentify', async (ctx, next) => {
     // clean circular structure
     ctx.body.songs.forEach(song => {
       delete song.client
+      delete song.Client
     })
 
     // if a songID was provided, pick out just that song
