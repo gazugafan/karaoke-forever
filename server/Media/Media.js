@@ -230,9 +230,11 @@ class Media {
         } else if (data.status === 'ready') {
           const prefs = await Prefs.get()
           console.log(JSON.stringify(prefs, undefined, 4))
-          /*if(prefs.saveYouTubeVideos && prefs.paths.) {
-            fs.copySync(path.join(prefs.tmpOutputPath, youtubeVideoId))
-          }*/
+          if(prefs.saveYouTubeVideos && prefs.paths.result.length) {
+            const destDir = path.join(prefs.paths.entities[1].path, data.video.artist, data.video.title)
+            try { fs.mkdirSync(destDir, true) } catch (err) { /* Dir already exists, do nothing */}
+            fs.copySync(path.join(prefs.tmpOutputPath, data.video.youtubeVideoId), destDir)
+          }
           if (data.video.karaoke) {
             Toast.sendToUser(io, userIds, {
               content: '🤩 "' + data.video.title + '" by ' + data.video.artist + ' downloaded successfully!'
