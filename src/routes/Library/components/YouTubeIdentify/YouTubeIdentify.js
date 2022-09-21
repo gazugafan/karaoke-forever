@@ -57,6 +57,7 @@ class YouTubeIdentify extends React.Component {
     if (includeArtistTitle) {
       body.artist = this.state.artist
       body.title = this.state.title
+      body.state = this.state
     }
 
     api('POST', 'youtubeidentify', {

@@ -120,6 +120,7 @@ router.post('/youtubesearch', async (ctx, next) => {
 
 // identifies song details for a YouTube video
 router.post('/youtubeidentify', async (ctx, next) => {
+  const prefs = await Prefs.get()
   // in case they weren't supplied, try to extract and cleanup the artist and title from the YouTube video title
   let [artist, title] = getArtistTitle(ctx.request.body.video.title, {
     defaultArtist: ctx.request.body.video.channel
@@ -149,7 +150,8 @@ router.post('/youtubeidentify', async (ctx, next) => {
 
   try {
     // search for this artist/title on Genius...
-    const Client = new Genius.Client()
+    console.log(prefs.geniusKey)
+    const Client = new Genius.Client(prefs.geniusKey)
     ctx.body.songs = await Client.songs.search(query)
 
     // if a songID was provided, pick out just that song
@@ -166,8 +168,6 @@ router.post('/youtubeidentify', async (ctx, next) => {
         ctx.body.artist = ctx.body.songs[0].artist.name
         ctx.body.title = ctx.body.songs[0].title
         ctx.body.lyrics = await ctx.body.songs[0].lyrics()
-        // remove song part identifier lines like [Chorus]...
-        // ctx.body.lyrics = ctx.body.lyrics.replace(/^\[.*\]\n/mg, '') // don't really need to do this anymore, as the server handles it. could add an option to do this, though
       } catch (err) {
         /* just ignore and return empty lyrics */
       }

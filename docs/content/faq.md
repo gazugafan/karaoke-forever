@@ -33,7 +33,7 @@ There are generally 2 ways to mix Karaoke Forever's player output (the music) wi
 
 ## My mp3/mp4 files have correct artist & title tags; can they be used instead of filenames?
 
-Yes, you can tell the metadata parser to use the embedded tags as-is if you'd prefer (or if your filenames aren't in "Artist - Title" format). Place the following `_kfconfig.js` in the applicable media folder:
+Yes, you can tell the metadata parser to use the embedded tags as-is if you'd prefer (or if your filenames aren't in "Artist - Title" format). Place the following `-keconfig.js` in the applicable media folder:
 
 {{< highlight js >}}
 return ({ compose, getDefaultParser, defaultMiddleware }) => {

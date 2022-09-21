@@ -19,6 +19,7 @@ const YouTubePrefs = props => {
   const upcomingLyricsColor = useSelector(state => state.prefs.upcomingLyricsColor)
   const playedLyricsColor = useSelector(state => state.prefs.playedLyricsColor)
   const maxYouTubeProcesses = useSelector(state => state.prefs.maxYouTubeProcesses)
+  const geniusKey = useSelector(state => state.prefs.geniusKey)
   const [testingSpleeter, setTestingSpleeter] = useState(false)
   const [spleeterResult, setSpleeterResult] = useState(null)
   const [testingAutoLyrix, setTestingAutoLyrix] = useState(false)
@@ -248,6 +249,22 @@ const YouTubePrefs = props => {
               are processing, try lowering this number. If you notice lots of songs
               are stuck processing for too long, try increasing this number. Note that
               AutoLyrixAlign Service also has its own additional concurrency setting.
+            </div>
+          </label>
+        </div>
+
+        <div className={styles.content} style={{ display: (isKaraokeGeneratorEnabled && isYouTubeEnabled) ? 'block' : 'none' }}>
+          <label>
+            Genius Key
+            <input type='text'
+                  defaultValue={geniusKey}
+                  onChange={updateTextbox}
+                  name='geniusKey'
+            />
+            <div className={styles.tip}>
+              This is your Genius.com Access Token (Key).
+              Create and accoung at genius.com and then generate a key in
+              https://genius.com/api-clients
             </div>
           </label>
         </div>

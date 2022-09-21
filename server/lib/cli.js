@@ -2,10 +2,10 @@ const path = require('path')
 const baseDir = path.resolve(path.dirname(require.main.filename), '..')
 const env = {
   NODE_ENV: process.env.NODE_ENV,
-  KF_SERVER_PATH_DATA: baseDir,
-  KF_SERVER_PATH_ASSETS: path.join(baseDir, 'assets'),
-  KF_SERVER_PATH_WEBROOT: path.join(baseDir, 'build'),
-  KF_SERVER_URL_PATH: '/',
+  KE_SERVER_PATH_DATA: baseDir,
+  KE_SERVER_PATH_ASSETS: path.join(baseDir, 'assets'),
+  KE_SERVER_PATH_WEBROOT: path.join(baseDir, 'build'),
+  KE_SERVER_URL_PATH: '/',
 }
 
 const yargs = require('yargs')
@@ -70,17 +70,17 @@ if (argv.version) {
 }
 
 if (argv.scan) {
-  env.KF_SERVER_SCAN = true
+  env.KE_SERVER_SCAN = true
 }
 
 // settings via CLI take precendence over env vars
 const opts = {
-  port: 'KF_SERVER_PORT',
-  urlPath: 'KF_SERVER_URL_PATH',
-  scannerConsoleLevel: 'KF_SCANNER_CONSOLE_LEVEL',
-  scannerLogLevel: 'KF_SCANNER_LOG_LEVEL',
-  serverConsoleLevel: 'KF_SERVER_CONSOLE_LEVEL',
-  serverLogLevel: 'KF_SERVER_LOG_LEVEL',
+  port: 'KE_SERVER_PORT',
+  urlPath: 'KE_SERVER_URL_PATH',
+  scannerConsoleLevel: 'KE_SCANNER_CONSOLE_LEVEL',
+  scannerLogLevel: 'KE_SCANNER_LOG_LEVEL',
+  serverConsoleLevel: 'KE_SERVER_CONSOLE_LEVEL',
+  serverLogLevel: 'KE_SERVER_LOG_LEVEL',
 }
 
 Object.keys(opts).forEach(key => {

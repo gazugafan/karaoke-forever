@@ -252,13 +252,13 @@ The following types are supported:
 
 - MP4 video (codec support can vary depending on the browser running the [player](#player)). Does not support background visualizations (videos are played as-is).
 
-Media filenames are expected to be in "Artist - Title" format by default, but this can be configured per-folder using a `_kfconfig.js` file. When this file is encountered in a folder it applies to all files and subfolders. If any subfolders have their own `_kfconfig.js`, that will take precedence.
+Media filenames are expected to be in "Artist - Title" format by default, but this can be configured per-folder using a `-keconfig.js` file. When this file is encountered in a folder it applies to all files and subfolders. If any subfolders have their own `-keconfig.js`, that will take precedence.
 
 Media with filenames that couldn't be parsed are [logged to a file](#file-locations) (to change the level of logging, see [Command Line Options](#command-line-options)) and won't appear in the library view.
 
 #### Configuring the Metadata Parser
 
-You can configure the default metadata parser by returning an object with the options you want to override. For example, if a folder has filenames in the format "Title - Artist" instead, you could add this `_kfconfig.js` file:
+You can configure the default metadata parser by returning an object with the options you want to override. For example, if a folder has filenames in the format "Title - Artist" instead, you could add this `-keconfig.js` file:
 
 {{< highlight js >}}
 return {
@@ -283,7 +283,7 @@ return {
 
 #### Creating a Metadata Parser (Experimental)
 
-Your `_kfconfig.js` can also return a *parser creator* instead of a configuration object. A parser creator returns a function (parser) that can be called for each media file. The [default parser](/repo/blob/master/server/Scanner/MetaParser/defaultMiddleware.js){{% icon-external %}} is still available so you don't have to reinvent the wheel.
+Your `-keconfig.js` can also return a *parser creator* instead of a configuration object. A parser creator returns a function (parser) that can be called for each media file. The [default parser](/repo/blob/master/server/Scanner/MetaParser/defaultMiddleware.js){{% icon-external %}} is still available so you don't have to reinvent the wheel.
 
 The following example creates a parser that removes the word 'junk' from each filename before handing off to the default parser:
 

@@ -28,11 +28,11 @@ module.exports = ({ env }) => {
 
     if (process.platform === 'win32') {
       // white 32x32
-      tray = new Tray(path.join(env.KF_SERVER_PATH_ASSETS, 'mic-white@2x.png'))
+      tray = new Tray(path.join(env.KE_SERVER_PATH_ASSETS, 'mic-white@2x.png'))
     } else {
       // blackish 32x32 (template works in light and dark macOS modes)
-      tray = new Tray(path.join(env.KF_SERVER_PATH_ASSETS, 'mic-blackTemplate.png'))
-      tray.setPressedImage(path.join(env.KF_SERVER_PATH_ASSETS, 'mic-white.png'))
+      tray = new Tray(path.join(env.KE_SERVER_PATH_ASSETS, 'mic-blackTemplate.png'))
+      tray.setPressedImage(path.join(env.KE_SERVER_PATH_ASSETS, 'mic-white.png'))
     }
 
     tray.setToolTip('Karaoke Forever Server v' + app.getVersion())
