@@ -156,7 +156,7 @@ router.post('/youtubeidentify', async (ctx, next) => {
     // undefine circular stuff
     ctx.body.songs.forEach(song => {
       song.client = null
-      song.artist = song.artist.name
+      song.artist.client = null
     })
 
     console.log(ctx.body.songs)
@@ -166,6 +166,8 @@ router.post('/youtubeidentify', async (ctx, next) => {
     if (ctx.request.body.songID) {
       if (prefs.geniusKey) {
         ctx.body.song = await Client.songs.get(ctx.request.body.songID)
+        song.client = null
+        song.artist.client = null
       } else {
         ctx.body.song = ctx.body.songs.find(song => {
           return (song.id === ctx.request.body.songID)
