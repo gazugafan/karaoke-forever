@@ -21,7 +21,8 @@ export default class HttpApi {
         'Content-Type': 'application/json',
       })
 
-      opts.body = JSON.stringify(opts.body, jsonCircularReplacer())
+      console.log('Stringifying here: HttpApi.js:25')
+      opts.body = JSON.stringify(opts.body)
     }
 
     return fetch(`${document.baseURI}api/${this.prefix}${url}`, opts)
@@ -36,16 +37,3 @@ export default class HttpApi {
       })
   }
 }
-
-const jsonCircularReplacer = () => {
-  const seen = new WeakSet();
-  return (key, value) => {
-    if (typeof value === 'object' && value !== null) {
-      if (seen.has(value)) {
-        return;
-      }
-      seen.add(value);
-    }
-    return value;
-  };
-};
