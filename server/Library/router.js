@@ -156,7 +156,8 @@ router.post('/youtubeidentify', async (ctx, next) => {
     // dereference circular stuff
     ctx.body.songs.forEach(song => {
       song._raw = null
-      //song.client = null
+      song.client.songs = null
+      //song.client.artists = null
       song.artist = song.artist.name
     })
 
