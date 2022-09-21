@@ -32,6 +32,7 @@ class YoutubeProcessor extends Youtube {
     this.ffmpegPath = prefs.ffmpegPath
     this.tmpOutputPath = prefs.tmpOutputPath
     this.maxYouTubeProcesses = prefs.maxYouTubeProcesses * 1
+    this.saveYouTubeVideos = prefs.saveYouTubeVideos
 
     if (this.maxYouTubeProcesses < 1) {
       this.maxYouTubeProcesses = 1
@@ -214,8 +215,12 @@ class YoutubeProcessor extends Youtube {
 
         // delete the leftover files and audio folder...
         try {
-          fs.unlinkSync(outputDir + '/audio.mp3')
-          fs.unlinkSync(outputDir + '/video.mp4')
+          if (!this.saveYouTubeVideos) {
+            fs.unlinkSync(outputDir + '/audio.mp3')
+            fs.unlinkSync(outputDir + '/video.mp4')
+          } else {
+            log.info(prefs)
+          }
           rimraf(outputDir + '/audio', () => { })
         } catch (err) {
           /* not a big deal. ignore deletion errors. */
@@ -225,8 +230,12 @@ class YoutubeProcessor extends Youtube {
 
         // delete the leftover files...
         try {
-          fs.unlinkSync(outputDir + '/audio.mp3')
-          fs.unlinkSync(outputDir + '/video.mp4')
+          if (!this.saveYouTubeVideos) {
+            fs.unlinkSync(outputDir + '/audio.mp3')
+            fs.unlinkSync(outputDir + '/video.mp4')
+          } else {
+            log.info(prefs)
+          }
         } catch (err) {
           /* not a big deal. ignore deletion errors. */
         }

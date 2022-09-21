@@ -19,6 +19,7 @@ const YouTubePrefs = props => {
   const upcomingLyricsColor = useSelector(state => state.prefs.upcomingLyricsColor)
   const playedLyricsColor = useSelector(state => state.prefs.playedLyricsColor)
   const maxYouTubeProcesses = useSelector(state => state.prefs.maxYouTubeProcesses)
+  const saveYouTubeVideos = useSelector(state => state.prefs.saveYouTubeVideos)
   const [testingSpleeter, setTestingSpleeter] = useState(false)
   const [spleeterResult, setSpleeterResult] = useState(null)
   const [testingAutoLyrix, setTestingAutoLyrix] = useState(false)
@@ -248,6 +249,21 @@ const YouTubePrefs = props => {
               are processing, try lowering this number. If you notice lots of songs
               are stuck processing for too long, try increasing this number. Note that
               AutoLyrixAlign Service also has its own additional concurrency setting.
+            </div>
+          </label>
+        </div>
+        
+        <div className={styles.content} style={{ display: (isKaraokeGeneratorEnabled && isYouTubeEnabled) ? 'block' : 'none' }}>
+          <label>
+            <input type='checkbox'
+                   checked={saveYouTubeVideos}
+                   onChange={toggleCheckbox}
+                   name='saveYouTubeVideos'
+            /> Save YouTube Videos
+            <div className={styles.tip}>
+              If checked, we'll save the YouTube Videos in your first Media folder.
+              This enables songs to be played again without being processed, but will increase disk usage.
+              If no Media folders are defined, this option does nothing.
             </div>
           </label>
         </div>
