@@ -87,7 +87,7 @@ async function serverWorker ({ env, startScanner, stopScanner }) {
   // --------------------
 
   // server error handler
-  /*app.on('error', (err, ctx) => {
+  app.on('error', (err, ctx) => {
     if (err.code === 'EPIPE') {
       // these are common since browsers make multiple requests for media files
       log.verbose(err.message)
@@ -101,7 +101,7 @@ async function serverWorker ({ env, startScanner, stopScanner }) {
 
     if (err.stack) log.error(err.stack)
     else log.error(err)
-  })*/
+  })
 
   // middleware error handler
   app.use(async (ctx, next) => {
@@ -115,7 +115,7 @@ async function serverWorker ({ env, startScanner, stopScanner }) {
   })
 
   // http request/response logging
-  //app.use(koaLogger((str, args) => (args.length === 6 && args[3] >= 500) ? log.error(str) : log.verbose(str)))
+  app.use(koaLogger((str, args) => (args.length === 6 && args[3] >= 500) ? log.error(str) : log.verbose(str)))
 
   app.use(koaFavicon(path.join(env.KE_SERVER_PATH_ASSETS, 'favicon.ico')))
   app.use(koaRange)
