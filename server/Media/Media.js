@@ -7,6 +7,7 @@ const Rooms = require('../Rooms')
 const Prefs = require('../Prefs')
 const rimraf = require('rimraf')
 const path = require('path')
+const fs = require('file-system');
 
 const {
   QUEUE_PUSH,
@@ -227,14 +228,16 @@ class Media {
           `
           await db.run(String(deleteQuery), deleteQuery.parameters)
         } else if (data.status === 'ready') {
+          const prefs = await Prefs.get()
+          console.log(JSON.stringify(prefs, undefined, 4))
+          /*if(prefs.saveYouTubeVideos && prefs.paths.) {
+            fs.copySync(path.join(prefs.tmpOutputPath, youtubeVideoId))
+          }*/
           if (data.video.karaoke) {
             Toast.sendToUser(io, userIds, {
               content: '🤩 "' + data.video.title + '" by ' + data.video.artist + ' downloaded successfully!'
             })
           } else {
-            const prefs = await Prefs.get()
-            console.log(data)
-            console.log(prefs)
             Toast.sendToUser(io, userIds, {
               content: '🤩 The karaoke mix for "' + data.video.title + '" by ' + data.video.artist + ' is ready!'
             })
