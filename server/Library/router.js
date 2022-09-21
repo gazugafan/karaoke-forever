@@ -164,11 +164,13 @@ router.post('/youtubeidentify', async (ctx, next) => {
     // it would be nice to search Genius just for that ID, but this would require a key
     if (ctx.request.body.songID) {
       if (prefs.geniusKey) {
+        console.log('With GeniusKey')
         ctx.body.song = await Client.songs.get(ctx.request.body.songID)
         song._raw = null
         song.client = null
         song.artist = song.artist.name
       } else {
+        console.log('Without GeniusKey')
         ctx.body.song = ctx.body.songs.find(song => {
           return (song.id === ctx.request.body.songID)
         })
