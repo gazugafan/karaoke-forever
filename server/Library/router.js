@@ -150,7 +150,6 @@ router.post('/youtubeidentify', async (ctx, next) => {
 
   try {
     // search for this artist/title on Genius...
-    console.log(prefs.geniusKey)
     const Client = new Genius.Client(prefs.geniusKey)
     ctx.body.songs = await Client.songs.search(query)
 
