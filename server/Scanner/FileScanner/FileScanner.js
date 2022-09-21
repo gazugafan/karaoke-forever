@@ -45,7 +45,6 @@ class FileScanner extends Scanner {
         files.set(pathId, list)
         numTotal += list.length
 
-        console.log('Stringifying here: FileScanner.js:51')
         log.info('  => found %s files with valid extensions %s',
           list.length.toLocaleString(),
           JSON.stringify(searchExts)

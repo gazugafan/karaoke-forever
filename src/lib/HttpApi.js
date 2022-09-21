@@ -21,7 +21,6 @@ export default class HttpApi {
         'Content-Type': 'application/json',
       })
 
-      console.log('Stringifying here: HttpApi.js:25')
       opts.body = JSON.stringify(opts.body)
     }
 

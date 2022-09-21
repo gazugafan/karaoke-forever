@@ -105,7 +105,6 @@ async function serverWorker ({ env, startScanner, stopScanner }) {
 
   // middleware error handler
   app.use(async (ctx, next) => {
-    console.log(ctx, next)
     try {
       await next()
     } catch (err) {

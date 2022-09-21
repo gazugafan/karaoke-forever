@@ -158,7 +158,6 @@ router.post('/youtubeidentify', async (ctx, next) => {
     if (ctx.request.body.songID) {
       if (prefs.geniusKey) {
         ctx.body.song = await Client.songs.get(ctx.request.body.songID)
-        console.log(ctx.body.song)
       } else {
         ctx.body.song = ctx.body.songs.find(song => {
           return (song.id === ctx.request.body.songID)

@@ -98,7 +98,6 @@ class PlayerController extends React.Component {
       history.push(this.props.queueId)
     }
 
-    console.log('Stringifying here: PlayerController.js:103')
     this.handleStatus({
       historyJSON: JSON.stringify(history),
       isAtQueueEnd: false,
