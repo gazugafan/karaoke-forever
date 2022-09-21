@@ -161,32 +161,18 @@ router.post('/youtubeidentify', async (ctx, next) => {
       song.artist = song.artist.name
     })
 
-    console.log(ctx.body.songs)
-
     // if a songID was provided, pick out just that song
     // it would be nice to search Genius just for that ID, but this would require a key
     if (ctx.request.body.songID) {
-      if (prefs.geniusKey) {
-        console.log('With GeniusKey')
-        ctx.body.song = await Client.songs.get(ctx.request.body.songID)
-        song._raw = null
-        song.client.songs = null
-        song.client.artists = null
-        song.artist = song.artist.name
-      } else {
-        console.log('Without GeniusKey')
-        ctx.body.song = ctx.body.songs.find(song => {
-          return (song.id === ctx.request.body.songID)
-        })
-      }
+      ctx.body.song = ctx.body.songs.find(song => {
+        return (song.id === ctx.request.body.songID)
+      })
     }
 
     // if only one song was found (or a songID was provided), get the lyrics for it immediately...
     if (ctx.body.song) {
       try {
-        console.log('getting lyrics')
         const lyrics = await ctx.body.song.lyrics()
-        console.log(lyrics)
         ctx.body.artist = ctx.body.song.artist
         ctx.body.title = ctx.body.song.title
         ctx.body.lyrics = lyrics
