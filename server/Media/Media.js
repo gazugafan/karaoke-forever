@@ -232,6 +232,9 @@ class Media {
               content: '🤩 "' + data.video.title + '" by ' + data.video.artist + ' downloaded successfully!'
             })
           } else {
+            const prefs = await Prefs.get()
+            console.log(data)
+            console.log(prefs)
             Toast.sendToUser(io, userIds, {
               content: '🤩 The karaoke mix for "' + data.video.title + '" by ' + data.video.artist + ' is ready!'
             })
