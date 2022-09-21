@@ -156,7 +156,7 @@ router.post('/youtubeidentify', async (ctx, next) => {
     // dereference circular stuff
     ctx.body.songs.forEach(song => {
       song._raw = null
-      song.client = null
+      //song.client = null
       song.artist = song.artist.name
     })
 
@@ -167,7 +167,7 @@ router.post('/youtubeidentify', async (ctx, next) => {
         console.log('With GeniusKey')
         ctx.body.song = await Client.songs.get(ctx.request.body.songID)
         song._raw = null
-        song.client = null
+        //song.client = null
         song.artist = song.artist.name
       } else {
         console.log('Without GeniusKey')
