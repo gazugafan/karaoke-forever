@@ -156,7 +156,7 @@ router.post('/youtubeidentify', async (ctx, next) => {
     // clean circular structure
     ctx.body.songs.forEach(song => {
       delete song.client
-      delete song.Client
+      delete song.artist.client
     })
 
     console.log(ctx.body.songs)
