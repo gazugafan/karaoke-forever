@@ -153,6 +153,13 @@ router.post('/youtubeidentify', async (ctx, next) => {
     const Client = new Genius.Client(prefs.geniusKey)
     ctx.body.songs = await Client.songs.search(query)
 
+    // undefine circular stuff
+    ctx.body.songs.forEach(song => {
+      song.client = null
+    })
+
+    console.log(ctx.body.songs)
+
     // if a songID was provided, pick out just that song
     // it would be nice to search Genius just for that ID, but this would require a key
     if (ctx.request.body.songID) {
