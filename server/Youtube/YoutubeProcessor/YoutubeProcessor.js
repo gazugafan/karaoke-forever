@@ -7,8 +7,8 @@ const db = require('../../lib/Database').db
 const sql = require('sqlate')
 const shell = require('../../lib/Shell')
 const log = require('../../lib/Log')
-  .set('console', process.env.KF_YOUTUBE_CONSOLE_LEVEL, process.env.NODE_ENV === 'development' ? 5 : 4)
-  .set('file', process.env.KF_YOUTUBE_LOG_LEVEL, process.env.NODE_ENV === 'development' ? 0 : 3)
+  .set('console', process.env.KE_YOUTUBE_CONSOLE_LEVEL, process.env.NODE_ENV === 'development' ? 5 : 4)
+  .set('file', process.env.KE_YOUTUBE_LOG_LEVEL, process.env.NODE_ENV === 'development' ? 0 : 3)
   .getLogger(`youtube[${process.pid}]`)
 const Youtube = require('../Youtube')
 const IPC = require('../../lib/IPCBridge')
@@ -32,6 +32,7 @@ class YoutubeProcessor extends Youtube {
     this.ffmpegPath = prefs.ffmpegPath
     this.tmpOutputPath = prefs.tmpOutputPath
     this.maxYouTubeProcesses = prefs.maxYouTubeProcesses * 1
+    this.saveYouTubeVideos = prefs.saveYouTubeVideos
 
     if (this.maxYouTubeProcesses < 1) {
       this.maxYouTubeProcesses = 1
@@ -214,8 +215,12 @@ class YoutubeProcessor extends Youtube {
 
         // delete the leftover files and audio folder...
         try {
-          fs.unlinkSync(outputDir + '/audio.mp3')
-          fs.unlinkSync(outputDir + '/video.mp4')
+          if (!this.saveYouTubeVideos) {
+            fs.unlinkSync(outputDir + '/audio.mp3')
+            fs.unlinkSync(outputDir + '/video.mp4')
+          } else {
+            log.info(prefs)
+          }
           rimraf(outputDir + '/audio', () => { })
         } catch (err) {
           /* not a big deal. ignore deletion errors. */
@@ -225,8 +230,12 @@ class YoutubeProcessor extends Youtube {
 
         // delete the leftover files...
         try {
-          fs.unlinkSync(outputDir + '/audio.mp3')
-          fs.unlinkSync(outputDir + '/video.mp4')
+          if (!this.saveYouTubeVideos) {
+            fs.unlinkSync(outputDir + '/audio.mp3')
+            fs.unlinkSync(outputDir + '/video.mp4')
+          } else {
+            log.info(prefs)
+          }
         } catch (err) {
           /* not a big deal. ignore deletion errors. */
         }

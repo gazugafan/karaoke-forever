@@ -120,6 +120,7 @@ router.post('/youtubesearch', async (ctx, next) => {
 
 // identifies song details for a YouTube video
 router.post('/youtubeidentify', async (ctx, next) => {
+  const prefs = await Prefs.get()
   // in case they weren't supplied, try to extract and cleanup the artist and title from the YouTube video title
   let [artist, title] = getArtistTitle(ctx.request.body.video.title, {
     defaultArtist: ctx.request.body.video.channel
@@ -149,27 +150,41 @@ router.post('/youtubeidentify', async (ctx, next) => {
 
   try {
     // search for this artist/title on Genius...
-    const Client = new Genius.Client()
+    const Client = new Genius.Client(prefs.geniusKey)
     ctx.body.songs = await Client.songs.search(query)
+
+    // dereference circular stuff
+    ctx.body.songs.forEach(song => {
+      song._raw = null
+      song.client.songs = null
+      song.client.artists = null
+      song.artist = song.artist.name
+    })
+    console.log(ctx.body.songs)
 
     // if a songID was provided, pick out just that song
     // it would be nice to search Genius just for that ID, but this would require a key
     if (ctx.request.body.songID) {
-      ctx.body.songs = ctx.body.songs.filter((song) => {
+      ctx.body.song = ctx.body.songs.find(song => {
         return (song.id === ctx.request.body.songID)
       })
     }
 
-    // if only one song was found (or a songID was provided), get the lyrics for it immediately...
+    // if only one song is found
     if (ctx.body.songs.length === 1) {
+      ctx.body.song = ctx.body.songs[0]
+    }
+
+    // if only one song was found (or a songID was provided), get the lyrics for it immediately...
+    if (ctx.body.song) {
       try {
-        ctx.body.artist = ctx.body.songs[0].artist.name
-        ctx.body.title = ctx.body.songs[0].title
-        ctx.body.lyrics = await ctx.body.songs[0].lyrics()
-        // remove song part identifier lines like [Chorus]...
-        // ctx.body.lyrics = ctx.body.lyrics.replace(/^\[.*\]\n/mg, '') // don't really need to do this anymore, as the server handles it. could add an option to do this, though
+        const lyrics = await ctx.body.song.lyrics()
+        ctx.body.artist = ctx.body.song.artist
+        ctx.body.title = ctx.body.song.title
+        ctx.body.lyrics = lyrics
       } catch (err) {
         /* just ignore and return empty lyrics */
+        console.log(err)
       }
     }
   } catch (err) {

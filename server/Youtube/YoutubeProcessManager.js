@@ -1,8 +1,8 @@
 const sql = require('sqlate')
 const env = require('../lib/cli')
 const log = require('../lib/Log')
-  .set('console', env.KF_SERVER_CONSOLE_LEVEL, env.NODE_ENV === 'development' ? 5 : 4)
-  .set('file', env.KF_SERVER_LOG_LEVEL, env.NODE_ENV === 'development' ? 0 : 3)
+  .set('console', env.KE_SERVER_CONSOLE_LEVEL, env.NODE_ENV === 'development' ? 5 : 4)
+  .set('file', env.KE_SERVER_LOG_LEVEL, env.NODE_ENV === 'development' ? 0 : 3)
   .getLogger(`main[${process.pid}]`)
 const IPC = require('../lib/IPCBridge')
 const childProcess = require('child_process')
@@ -30,7 +30,7 @@ const startYoutubeProcessor = async () => {
   if (youtubeProcess === null) {
     await resetProcessingVideos()
     log.info('Starting YouTube processor')
-    let options = { env: { ...env, KF_CHILD_PROCESS: 'youtube' } }
+    let options = { env: { ...env, KE_CHILD_PROCESS: 'youtube' } }
     if (process.env.NODE_ENV === 'development') {
       options.execArgv = ['--inspect=5724']
     }

@@ -2,13 +2,13 @@ const path = require('path')
 const log = require('../../lib/Log').getLogger('FileScanner')
 const fs = require('fs')
 const { NodeVM } = require('vm2')
-const KF_CONFIG = '_kfconfig.js'
+const KE_CONFIG = '-keconfig.js'
 
 // search each folder from dir up to baseDir
 function getConfig (dir, baseDir) {
   dir = path.normalize(dir)
   baseDir = path.normalize(baseDir)
-  const cfgPath = path.resolve(dir, KF_CONFIG)
+  const cfgPath = path.resolve(dir, KE_CONFIG)
 
   try {
     const userScript = fs.readFileSync(cfgPath, 'utf-8')

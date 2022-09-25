@@ -35,8 +35,8 @@ const {
 } = require('../shared/actionTypes')
 
 async function serverWorker ({ env, startScanner, stopScanner }) {
-  const indexFile = path.join(env.KF_SERVER_PATH_WEBROOT, 'index.html')
-  const urlPath = env.KF_SERVER_URL_PATH.replace(/\/?$/, '/') // force trailing slash
+  const indexFile = path.join(env.KE_SERVER_PATH_WEBROOT, 'index.html')
+  const urlPath = env.KE_SERVER_URL_PATH.replace(/\/?$/, '/') // force trailing slash
   const jwtKey = await Prefs.getJwtKey()
   const app = new Koa()
   let server, io
@@ -70,7 +70,7 @@ async function serverWorker ({ env, startScanner, stopScanner }) {
     YoutubeProcessManager.startYoutubeProcessor()
 
     // success callback in 3rd arg
-    server.listen(env.KF_SERVER_PORT, () => {
+    server.listen(env.KE_SERVER_PORT, () => {
       const port = server.address().port
       const url = `http://${getIPAddress()}${port === 80 ? '' : ':' + port}${urlPath}`
       log.info(`Web server running at ${url}`)
@@ -117,7 +117,7 @@ async function serverWorker ({ env, startScanner, stopScanner }) {
   // http request/response logging
   app.use(koaLogger((str, args) => (args.length === 6 && args[3] >= 500) ? log.error(str) : log.verbose(str)))
 
-  app.use(koaFavicon(path.join(env.KF_SERVER_PATH_ASSETS, 'favicon.ico')))
+  app.use(koaFavicon(path.join(env.KE_SERVER_PATH_ASSETS, 'favicon.ico')))
   app.use(koaRange)
   app.use(koaBody({ multipart: true }))
 
@@ -208,8 +208,8 @@ async function serverWorker ({ env, startScanner, stopScanner }) {
     app.use(createIndexMiddleware(await promisify(fs.readFile)(indexFile, 'utf8')))
 
     // serve build and asset folders
-    app.use(koaMount(urlPath, koaStatic(env.KF_SERVER_PATH_WEBROOT)))
-    app.use(koaMount(`${urlPath}assets`, koaStatic(env.KF_SERVER_PATH_ASSETS)))
+    app.use(koaMount(urlPath, koaStatic(env.KE_SERVER_PATH_WEBROOT)))
+    app.use(koaMount(`${urlPath}assets`, koaStatic(env.KE_SERVER_PATH_ASSETS)))
 
     createServer()
     return
@@ -245,7 +245,7 @@ async function serverWorker ({ env, startScanner, stopScanner }) {
   app.use(hotMiddleware)
 
   // serve assets since webpack-dev-server is unaware of this folder
-  app.use(koaMount(`${urlPath}assets`, koaStatic(env.KF_SERVER_PATH_ASSETS)))
+  app.use(koaMount(`${urlPath}assets`, koaStatic(env.KE_SERVER_PATH_ASSETS)))
 }
 
 module.exports = serverWorker

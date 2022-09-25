@@ -21,7 +21,7 @@ log.transports.console.format = function (msg) {
 
 // file defaults
 log.transports.file.level = false
-log.transports.file.fileName = (process.env.KF_CHILD_PROCESS || 'server') + '.log'
+log.transports.file.fileName = (process.env.KE_CHILD_PROCESS || 'server') + '.log'
 log.transports.file.format = (msg) => {
   const text = stripAnsi(util.format.apply(null, msg.data))
   return `${msg.date.toLocaleString()} [${msg.level}] ${text}`

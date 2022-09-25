@@ -57,6 +57,7 @@ class YouTubeIdentify extends React.Component {
     if (includeArtistTitle) {
       body.artist = this.state.artist
       body.title = this.state.title
+      body.state = this.state
     }
 
     api('POST', 'youtubeidentify', {
@@ -124,7 +125,7 @@ class YouTubeIdentify extends React.Component {
           width:this.props.ui.innerWidth,
           height:this.props.ui.innerHeight,
         }}>
-          <div className={styles.error}>The server had a hickup :(</div>
+          <div className={styles.error}>The server had a hiccup :(</div>
           <label className={styles.label}>
             <button onClick={this.retry} className={`${styles.btn} primary`}>Try Again</button>
           </label>
