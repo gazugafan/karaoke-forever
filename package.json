@@ -52,7 +52,7 @@
   "dependencies": {
     "@babel/runtime": "^7.14.5",
     "@jcoreio/async-throttle": "^1.4.0",
-	"axios": "^0.21.1",
+    "axios": "^0.21.1",
     "bcrypt": "^5.0.1",
     "ctx-compose": "^3.0.0",
     "dotenv": "^8.6.0",
@@ -70,7 +70,7 @@
     "koa-router": "^10.0.0",
     "koa-static": "^5.0.0",
     "music-metadata": "^7.8.6",
-	"react-toastify": "^7.0.4",
+    "react-toastify": "^7.0.4",
     "rimraf": "^3.0.2",
     "socket.io": "^4.1.2",
     "sqlate": "^2.1.0",
@@ -79,8 +79,8 @@
     "strip-ansi": "^6.0.0",
     "vm2": "^3.9.3",
     "yargs": "^17.0.1",
-    "ytdl-core": "^4.9.1",
-    "ytsr": "^3.5.0"
+    "youtube-search-api": "^2.0.1",
+    "ytdl-core": "^4.9.1"
   },
   "devDependencies": {
     "@babel/core": "^7.14.5",

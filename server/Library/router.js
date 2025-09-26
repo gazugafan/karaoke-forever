@@ -5,7 +5,7 @@ const router = KoaRouter({ prefix: '/api' })
 const Media = require('../Media')
 const Prefs = require('../Prefs')
 const DateTime = require('../lib/DateTime')
-const ytsr = require('ytsr')
+const youtubesearchapi = require("youtube-search-api");
 const getArtistTitle = require('get-artist-title')
 const Genius = require('genius-lyrics')
 
@@ -53,19 +53,27 @@ router.post('/youtubesearch', async (ctx, next) => {
     queries.push(ctx.request.body.replace(/karaoke/gi, ''))
   }
 
-  const filterPromises = queries.map(query => {
-    return ytsr.getFilters(query)
-  })
+  const queryPromises = queries.map(query => {
+    return youtubesearchapi.GetListByKeyword(query, false, 20, [{ type: "video" }])
+    .then(result => {
+      // Add the original query to the result object
+      result.originalQuery = query;
 
-  const filterResults = await Promise.all(filterPromises)
+      //go through every item...
+      result.items.forEach(item => {
+        //find the best thumbnail in the thumbnail property...
+        item.bestThumbnail = item.thumbnail.thumbnails.reduce((best, current) => {
+          return (current.width > best.width) ? current : best;
+        }, { width: 0 });
 
-  const searchPromises = filterResults.map(filters => {
-    return ytsr(filters.get('Type').get('Video').url, {
-      limit: 20,
-    })
-  })
+        item.duration = item.length.simpleText;
+        item.url = `https://www.youtube.com/watch?v=${item.id}`;
+      });
+      return result;
+    });
+  });
 
-  const searchResults = await Promise.all(searchPromises)
+  const searchResults = await Promise.all(queryPromises)
 
   // get videos queued in this room so we can determine which videos are queued...
   const query = sql`
@@ -80,7 +88,7 @@ router.post('/youtubesearch', async (ctx, next) => {
     return searchResult.items.filter((video) => {
       const karaokeSearched = searchResult.originalQuery.toLowerCase().includes('karaoke')
       const karaokeFound = video.title.toLowerCase().includes('karaoke')
-      return (video.author && video.bestThumbnail && DateTime.durationToSeconds(video.duration) < 600 && karaokeSearched === karaokeFound)
+      return (video.channelTitle && !video.isLive && video.bestThumbnail && DateTime.durationToSeconds(video.duration) < 600 && karaokeSearched === karaokeFound)
     }).map((video) => {
       return {
         id: video.id,
@@ -88,7 +96,7 @@ router.post('/youtubesearch', async (ctx, next) => {
         title: video.title,
         duration: video.duration,
         thumbnail: video.bestThumbnail.url,
-        channel: video.author.name,
+        channel: video.channelTitle,
         karaoke: video.title.toLowerCase().includes('karaoke'),
         queued: queuedVideoIds.includes(video.id),
       }
