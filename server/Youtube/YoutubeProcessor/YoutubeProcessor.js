@@ -1,6 +1,6 @@
 const fs = require('fs')
 const rimraf = require('rimraf')
-const ytdl = require('ytdl-core')
+const youtubedl = require('youtube-dl-exec')
 const axios = require('axios')
 const FormData = require('form-data')
 const db = require('../../lib/Database').db
@@ -135,42 +135,37 @@ class YoutubeProcessor extends Youtube {
       const outputDir = this.tmpOutputPath + '/' + video.youtubeVideoId
       fs.mkdirSync(outputDir, { recursive: true })
 
-      // download the audio and video separately at the same time...
+      // download the video...
       log.info('Downloading video #' + video.id + '...')
-      try {
-        await Promise.all([
-          shell.promisifiedPipe(ytdl(video.url, { quality: 'highestaudio', filter:'audioonly' }),
-            fs.createWriteStream(outputDir + '/audio.mp3')),
-          shell.promisifiedPipe(ytdl(video.url, { quality: 'highestvideo', filter:'videoonly' }),
-            fs.createWriteStream(outputDir + '/video.mp4'))
-        ])
-      } catch (e) {
-        // if something went wrong, it's possible there just isn't a separate audio/video stream to download.
-        // so let's try downloading a combined stream and then separating it. This is not preferable because
-        // the combined streams are usually of lower quality, but it's better than nothing as a fallback...
+      await youtubedl(video.url, {
+        noCheckCertificates: true,
+        noWarnings: true,
+        preferFreeFormats: true,
+        addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
+        f: 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
+        o: outputDir + '/combined.%(ext)s'
+      })
 
-        // delete any audio/video files that might have partially downloaded before leading to the download error...
-        fs.unlinkSync(outputDir + '/audio.mp3')
-        fs.unlinkSync(outputDir + '/video.mp4')
-
-        // download a combined audio/video file...
-        await shell.promisifiedPipe(ytdl(video.url, { quality: 'highest', filter:'audioandvideo' }),
-          fs.createWriteStream(outputDir + '/combined.mp4'))
-
-        // ensure we got the combined file...
-        if (!fs.existsSync(outputDir + '/combined.mp4') || fs.statSync(outputDir + '/combined.mp4').size < 1000) {
-          throw new Error('Problem downloading combined audio and video file from YouTube')
+      //find the downloaded file (it could be mp4, mk4, or some other extension)...
+      const files = fs.readdirSync(outputDir)
+      let downloadedFile = null
+      for (let i = 0; i < files.length; i++) {
+        if (files[i].startsWith('combined.')) {
+          downloadedFile = outputDir + '/' + files[i]
+          break
         }
-
-        // separate the audio and video...
-        await Promise.all([
-          shell.promisifiedExec(this.ffmpegPath + ' -y -nostdin -i "' + outputDir + '/combined.mp4" -vn "' + outputDir + '/audio.mp3"'),
-          shell.promisifiedExec(this.ffmpegPath + ' -y -nostdin -i "' + outputDir + '/combined.mp4" -an -vcodec copy "' + outputDir + '/video.mp4"')
-        ])
-
-        // delete the unnecessary combined file...
-        fs.unlinkSync(outputDir + '/combined.mp4')
       }
+
+      // ensure we got the combined file...
+      if (!downloadedFile || !fs.existsSync(downloadedFile) || fs.statSync(downloadedFile).size < 1000) {
+        throw new Error('Problem downloading combined audio and video file from YouTube')
+      }
+
+      // separate the audio and video...
+      await Promise.all([
+        shell.promisifiedExec(this.ffmpegPath + ' -y -nostdin -i "' + downloadedFile + '" -vn "' + outputDir + '/audio.mp3"'),
+        shell.promisifiedExec(this.ffmpegPath + ' -y -nostdin -i "' + downloadedFile + '" -an -vcodec copy "' + outputDir + '/video.mp4"')
+      ])
 
       // ensure we got the audio file...
       if (!fs.existsSync(outputDir + '/audio.mp3') || fs.statSync(outputDir + '/audio.mp3').size < 1000) {

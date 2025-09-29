@@ -18,12 +18,13 @@ const config = {
   entry: {
     main: [
       './src/main.js',
-      __DEV__ && 'webpack-hot-middleware/client', // https://github.com/pmmmwh/react-refresh-webpack-plugin/issues/213
+      __DEV__ && 'webpack-hot-middleware/client', // keep only if you're using express+middleware, not WDS
     ].filter(Boolean),
   },
   output: {
     path: path.join(baseDir, 'build'),
-    filename: __DEV__ ? '[name].js' : '[name].[fullhash].js',
+    filename: __DEV__ ? '[name].js' : '[name].[contenthash].js',
+    clean: true, // Webpack 5 built-in "clean" option
   },
   resolve: {
     modules: [
@@ -40,7 +41,7 @@ const config = {
   },
   module: { rules: [] },
   plugins: [
-    new webpack.DefinePlugin(Object.assign({
+    new webpack.DefinePlugin({
       __DEV__,
       __TEST__,
       __PROD__,
@@ -50,11 +51,11 @@ const config = {
       __KF_URL_REPO__: JSON.stringify('https://github.com/bhj/karaoke-forever/'),
       __KF_URL_SPONSOR__: JSON.stringify('https://github.com/sponsors/bhj/'),
       __KF_COPYRIGHT__: JSON.stringify(`2019-${new Date().getFullYear()} RadRoot LLC`),
-    })),
+    }),
     new CaseSensitivePathsPlugin(),
     new MiniCssExtractPlugin({
-      filename: __DEV__ ? '[name].css' : '[name].[fullhash].css',
-      chunkFilename: __DEV__ ? '[id].css' : '[id].[fullhash].css',
+      filename: __DEV__ ? '[name].css' : '[name].[contenthash].css',
+      chunkFilename: __DEV__ ? '[id].css' : '[id].[contenthash].css',
     }),
     __DEV__ && new webpack.HotModuleReplacementPlugin(),
     __DEV__ && new ReactRefreshWebpackPlugin(),
@@ -67,6 +68,7 @@ const config = {
   stats: 'minimal',
 }
 
+// Production-only license plugin
 if (__PROD__) {
   config.plugins.push(new LicenseWebpackPlugin({
     addBanner: true,
@@ -74,15 +76,12 @@ if (__PROD__) {
     perChunkOutput: false,
     renderLicenses: (modules) => {
       let txt = ''
-
       modules.forEach(m => {
         if (!m.licenseText) return
-
         txt += '\n' + '*'.repeat(71) + '\n\n'
         txt += m.packageJson.name + '\n'
         txt += m.licenseText.replace(/(\S)\n(\S)/gm, '$1 $2')
       })
-
       return 'Karaoke Forever\n' + fs.readFileSync('./LICENSE', 'utf8') + txt
     },
   }))
@@ -97,7 +96,7 @@ config.plugins.push(new HtmlWebpackPlugin({
 // Loaders
 // ------------------------------------
 
-// JavaScript
+// JavaScript / JSX
 config.module.rules.push({
   test: /\.(js|jsx)$/,
   exclude: /node_modules/,
@@ -113,78 +112,66 @@ config.module.rules.push({
   }],
 })
 
-// Global Style
+// Global CSS (files matching *global.css)
 config.module.rules.push({
-  test : /(global)\.css$/,
-  use  : [{
-    loader : MiniCssExtractPlugin.loader,
-  }, {
-    loader  : 'css-loader',
-    options : {
-      modules   : false,
-      sourceMap : false,
-    }
-  }],
-})
-
-// CSS Modules
-config.module.rules.push({
-  test: /\.css$/,
-  exclude : /(global)\.css$/,
+  test: /(global)\.css$/,
   use: [
+    MiniCssExtractPlugin.loader,
     {
-      loader : MiniCssExtractPlugin.loader,
-    }, {
       loader: 'css-loader',
       options: {
-        modules: {
-          localIdentName: __DEV__ ? '[path][name]__[local]__' : '[hash:base64]',
-        }
+        modules: false, // no CSS Modules for global files
+        sourceMap: __DEV__,
       }
     }
   ],
 })
 
-// Files
+// CSS Modules (all .css except global)
+config.module.rules.push({
+  test: /\.css$/,
+  exclude: /(global)\.css$/,
+  use: [
+    MiniCssExtractPlugin.loader,
+    {
+      loader: 'css-loader',
+      options: {
+        modules: {
+          mode: 'local', // enable CSS Modules
+          localIdentName: __DEV__ ? '[path][name]__[local]__' : '[hash:base64]',
+          exportLocalsConvention: 'camelCaseOnly',
+          exportOnlyLocals: false, // needed to generate a default export object
+          namedExport:false
+        },
+      },
+    },
+  ],
+})
+
+// Asset Modules (replaces url-loader/file-loader)
 config.module.rules.push(
   {
-    test    : /\.woff2(\?.*)?$/,
-    loader  : 'url-loader',
-    options : {
-      limit    : '10000',
-      mimetype : 'application/font-woff2'
-    }
+    test: /\.woff2(\?.*)?$/,
+    type: 'asset/resource',
+    generator: { filename: 'fonts/[name][ext]' }
   },
   {
-    test    : /\.svg(\?.*)?$/,
-    loader  : 'url-loader',
-    options : {
-      limit    : '10000',
-      mimetype : 'image/svg+xml'
-    }
+    test: /\.svg(\?.*)?$/,
+    type: 'asset/resource',
+    generator: { filename: 'images/[name][ext]' }
   },
   {
-    test    : /\.(png|jpg|gif)$/,
-    loader  : 'url-loader',
-    options : {
-      limit : '8192'
-    }
+    test: /\.(png|jpe?g|gif)$/i,
+    type: 'asset',
+    parser: { dataUrlCondition: { maxSize: 8 * 1024 } }, // inline <8kb, file otherwise
+    generator: { filename: 'images/[name][ext]' }
   }
 )
 
 // Markdown
-config.module.rules.push(
-  {
-    test: /\.md$/,
-    use: [
-      {
-        loader: 'html-loader'
-      },
-      {
-        loader: 'markdown-loader',
-      }
-    ]
-  },
-)
+config.module.rules.push({
+  test: /\.md$/,
+  use: ['html-loader', 'markdown-loader']
+})
 
 module.exports = config
