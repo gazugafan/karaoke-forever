@@ -30,6 +30,7 @@ class YoutubeProcessor extends Youtube {
     this.spleeterPath = prefs.spleeterPath
     this.autoLyrixHost = prefs.autoLyrixHost
     this.ffmpegPath = prefs.ffmpegPath
+    this.youtubeDlExecOptions = prefs.youtubeDlExecOptions
     this.tmpOutputPath = prefs.tmpOutputPath
     this.maxYouTubeProcesses = prefs.maxYouTubeProcesses * 1
 
@@ -137,16 +138,27 @@ class YoutubeProcessor extends Youtube {
 
       // download the video...
       log.info('Downloading video #' + video.id + '...')
-      await youtubedl(video.url, {
+      const options = {
         noCheckCertificates: true,
         noWarnings: true,
         preferFreeFormats: true,
         addHeader: ['referer:youtube.com', 'user-agent:googlebot'],
         f: 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
         o: outputDir + '/combined.%(ext)s'
-      })
+      }
 
-      //find the downloaded file (it could be mp4, mk4, or some other extension)...
+      // add any extra youtube-dl exec options from prefs...
+      if (Array.isArray(this.youtubeDlExecOptions)) {
+        for (const option of this.youtubeDlExecOptions) {
+          if (option && typeof option.key === 'string' && option.key.trim()) {
+            options[option.key] = option.value
+          }
+        }
+      }
+
+      await youtubedl(video.url, options)
+
+      // find the downloaded file (it could be mp4, mk4, or some other extension)...
       const files = fs.readdirSync(outputDir)
       let downloadedFile = null
       for (let i = 0; i < files.length; i++) {

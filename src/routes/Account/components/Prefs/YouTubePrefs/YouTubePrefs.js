@@ -15,6 +15,7 @@ const YouTubePrefs = props => {
   const spleeterPath = useSelector(state => state.prefs.spleeterPath)
   const autoLyrixHost = useSelector(state => state.prefs.autoLyrixHost)
   const ffmpegPath = useSelector(state => state.prefs.ffmpegPath)
+  const youtubeDlExecOptions = useSelector(state => state.prefs.youtubeDlExecOptions)
   const tmpOutputPath = useSelector(state => state.prefs.tmpOutputPath)
   const upcomingLyricsColor = useSelector(state => state.prefs.upcomingLyricsColor)
   const playedLyricsColor = useSelector(state => state.prefs.playedLyricsColor)
@@ -25,6 +26,12 @@ const YouTubePrefs = props => {
   const [autoLyrixResult, setAutoLyrixResult] = useState(null)
   const [testingFfmpeg, setTestingFfmpeg] = useState(false)
   const [ffmpegResult, setFfmpegResult] = useState(null)
+  // Add new state for handling YouTube options form
+  const [newOptionKey, setNewOptionKey] = useState('')
+  const [newOptionValue, setNewOptionValue] = useState('')
+  const [newOptionType, setNewOptionType] = useState('string')
+  // Add state to control form visibility
+  const [isAddFormVisible, setIsAddFormVisible] = useState(false)
 
   const toggleExpanded = useCallback(() => {
     setExpanded(!isExpanded)
@@ -80,6 +87,45 @@ const YouTubePrefs = props => {
       })
   }
 
+  // Add a new option to the youtubeDlExecOptions array
+  const addOption = useCallback(() => {
+    if (!newOptionKey.trim()) return
+
+    const newOptions = [...youtubeDlExecOptions]
+    const newOption = {
+      key: newOptionKey.trim(),
+      value: newOptionType === 'boolean' ? newOptionValue === 'true' : newOptionValue
+    }
+
+    newOptions.push(newOption)
+    dispatch(setPref('youtubeDlExecOptions', newOptions))
+
+    // Reset the form
+    setNewOptionKey('')
+    setNewOptionValue('')
+    setNewOptionType('string')
+    setIsAddFormVisible(false) // Hide the form after adding
+  }, [dispatch, newOptionKey, newOptionValue, newOptionType, youtubeDlExecOptions])
+
+  // Remove an option from the youtubeDlExecOptions array
+  const removeOption = useCallback((indexToRemove) => {
+    const newOptions = youtubeDlExecOptions.filter((_, index) => index !== indexToRemove)
+    dispatch(setPref('youtubeDlExecOptions', newOptions))
+  }, [dispatch, youtubeDlExecOptions])
+
+  // Cancel adding option and hide the form
+  const cancelAddOption = useCallback(() => {
+    setNewOptionKey('')
+    setNewOptionValue('')
+    setNewOptionType('string')
+    setIsAddFormVisible(false)
+  }, [])
+
+  // Show the form when clicking the Add Option button
+  const showAddForm = useCallback(() => {
+    setIsAddFormVisible(true)
+  }, [])
+
   return (
     <div className={styles.container}>
       <div className={styles.heading} onClick={toggleExpanded}>
@@ -118,6 +164,113 @@ const YouTubePrefs = props => {
           {testingFfmpeg && (<div>Testing FFMPEG...</div>)}
           {ffmpegResult !== null && ffmpegResult.success && <div className={styles.testSuccess}>{ffmpegResult.message}</div>}
           {ffmpegResult !== null && !ffmpegResult.success && <div className={styles.testFailed}>{ffmpegResult.message}</div>}
+        </div>
+
+        <div className={styles.content} style={{ display: isYouTubeEnabled ? 'block' : 'none' }}>
+          <label>
+            Youtube-dl-exec Options
+            <div className={styles.tip}>
+              Pass additional options to youtube-dl-exec when downloading videos.
+              Only string and boolean options are supported.
+              These will then be passed to the yt-dlp command.
+              <br /><a href='https://github.com/microlinkhq/youtube-dl-exec/tree/master?tab=readme-ov-file#usage'
+                 target='_blank' rel='noreferrer'>More info</a>.
+            </div>
+          </label>
+
+          <div className={styles.youtubeDlOptionsSection}>
+
+            {/* Display current options */}
+            <div className={styles.optionsContainer}>
+              {youtubeDlExecOptions.length > 0 && (
+                <ul className={styles.optionsList}>
+                  {youtubeDlExecOptions.map((option, index) => (
+                    <li key={index} className={styles.optionItem}>
+                      <code>{option.key}: {typeof option.value === 'boolean' ? option.value.toString() : option.value}</code>
+                      <Icon icon='DELETE' size={18} className={styles.icon}
+                        onClick={() => removeOption(index)}
+                        aria-label='Remove option'/>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            {/* Show Add Option button when form is hidden */}
+            {!isAddFormVisible && (
+              <div className={styles.addOptionButtonContainer}>
+                <button
+                  type='button'
+                  onClick={showAddForm}
+                  className={styles.addOptionButton}
+                >
+                  + Add New Option
+                </button>
+              </div>
+            )}
+
+            {/* Add new option form - only visible when isAddFormVisible is true */}
+            {isAddFormVisible && (
+              <div className={styles.addOptionForm}>
+                <input
+                  type='text'
+                  placeholder='Option key'
+                  value={newOptionKey}
+                  onChange={(e) => setNewOptionKey(e.target.value)}
+                  className={styles.optionInput}
+                />
+
+                <select
+                  value={newOptionType}
+                  onChange={(e) => setNewOptionType(e.target.value)}
+                  className={styles.optionTypeSelect}
+                >
+                  <option value='string'>String</option>
+                  <option value='boolean'>Boolean</option>
+                </select>
+                =
+                {newOptionType === 'boolean'
+                  ? (
+                  <select
+                    value={newOptionValue}
+                    onChange={(e) => setNewOptionValue(e.target.value)}
+                    className={styles.optionValue}
+                  >
+                    <option value='true'>true</option>
+                    <option value='false'>false</option>
+                  </select>
+                    )
+                  : (
+                  <input
+                    type='text'
+                    placeholder='Option value'
+                    value={newOptionValue}
+                    onChange={(e) => setNewOptionValue(e.target.value)}
+                    className={styles.optionValue}
+                  />
+                    )}
+
+                <div className={styles.formButtons}>
+                  <button
+                    type='button'
+                    onClick={addOption}
+                    className={styles.addButton}
+                    disabled={!newOptionKey.trim()}
+                  >
+                    Add
+                  </button>
+                  <button
+                    type='button'
+                    onClick={cancelAddOption}
+                    className={styles.cancelButton}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
         </div>
 
         <div className={styles.content} style={{ display: isYouTubeEnabled ? 'block' : 'none' }}>

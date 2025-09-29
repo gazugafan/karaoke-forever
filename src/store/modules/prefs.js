@@ -143,6 +143,7 @@ const initialState = {
   spleeterPath: 'spleeter',
   autoLyrixHost: 'http://localhost:3000',
   ffmpegPath: 'ffmpeg',
+  youtubeDlExecOptions: [],
   upcomingLyricsColor: '#fff',
   playedLyricsColor: '#d9a000',
   tmpOutputPath: 'tmp',

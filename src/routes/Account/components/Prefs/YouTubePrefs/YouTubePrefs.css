@@ -1,7 +1,6 @@
 .container {
   background-color: var(--panel-title-bg-color);
   border-radius: var(--border-radius);
-  cursor: pointer;
   margin-top: var(--container-padding);
 }
 
@@ -33,6 +32,54 @@
 	margin-left:10px;
 	font-size:14px;
 	color: #a49920;
+}
+
+.youtubeDlOptionsSection {
+	margin-left:20px;
+	margin-top:10px;
+}
+
+.optionsContainer {
+	display: flex;
+	align-items: center;
+}
+
+.optionsContainer ul {
+	margin-top:0;
+	margin-bottom:10px;
+}
+
+.addOptionButton {
+	padding: 5px 10px !important;
+	width: auto !important;
+}
+
+.optionsContainer code, .optionsContainer button {
+	width: auto;
+}
+
+.optionsContainer svg {
+	margin-left: 7px;
+	cursor: pointer;
+}
+
+.addOptionForm {
+	display: flex;
+	align-items: center;
+}
+
+.addOptionForm input, .addOptionForm select, .addOptionForm button {
+	width: auto;
+	font-size: 12px;
+}
+
+.addOptionForm button {
+	padding: 7px;
+	margin-left: 7px;
+}
+
+.optionValue {
+	flex-grow:1;
 }
 
 .testSuccess {
