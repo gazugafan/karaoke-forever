@@ -242,7 +242,7 @@ YouTube will frequently change things that will break searching and/or downloadi
 With some extra setup, we can turn almost ANY song or music video from YouTube into a karaoke mix--complete with the vocals removed and synchronized lyrics. This requires spleeter, AutoLyrixAlign Service, and a good computer with several Gigs of storage space and lots of RAM.
 
 - [AutoLyrixAlign Service](https://github.com/gazugafan/AutoLyrixAlignService){{% icon-external %}}: Follow the installation instructions. Note that it requires around 15GB of RAM, 16GB of storage space, and runs best on Linux. It can be installed on a separate server from the one Karaoke Forever is installed on, as long as the Karaoke Forever server can reach it via HTTP(s).
-- [Spleeter](https://github.com/deezer/spleeter){{% icon-external %}}: This requires [Python](https://www.python.org){{% icon-external %}} v3.6 - v3.8 (v3.9 will NOT work). You should already have FFMPEG, and you do NOT need `libsndfile`. You may need to install [tensorflow](https://www.tensorflow.org){{% icon-external %}} v2.3.0 separately. You should end up with a `spleeter` executable that can be run from the same server Karaoke Forever is installed on.
+- [Spleeter](https://github.com/deezer/spleeter){{% icon-external %}}: You should already have FFMPEG and Python installed, and you do NOT need `libsndfile`. You may need to install [tensorflow](https://www.tensorflow.org){{% icon-external %}} v2.3.0 separately. You should end up with a `spleeter` executable that can be run from the same server Karaoke Forever is installed on.
 
 <div class="row">
   {{% img srcset="app-youtube2.png 2x" src="app-youtube2.png" alt="Additional Settings" %}}
