@@ -189,7 +189,7 @@ The server hosts the app and your media files, and can run on relatively minimal
 
 #### Any OS with Node.js
 
-Karaoke Forever Server requires [Node.js](https://nodejs.org){{% icon-external %}} 12 or later.
+Karaoke Forever Server requires [Node.js](https://nodejs.org){{% icon-external %}} 18 or later.
 
 1. Install via ```npm```
 
@@ -214,6 +214,8 @@ Karaoke Forever Server requires [Node.js](https://nodejs.org){{% icon-external %
 
 In addition to (or instead of) using local media files, you can allow users to search for karaoke songs on YouTube. Doing so requires [FFMPEG](https://www.ffmpeg.org){{% icon-external %}} to be installed on the server, along with an Internet connection. Follow the instructions to install FFMPEG on your OS.
 
+You'll also need [Python](https://www.python.org){{% icon-external %}} 3.9 or later installed and available in your PATH as `python3`. Python 3.10 or later is recommended and will likely be required soon by `yt-dlp`.
+
 To enable YouTube search, login to the webapp with your admin account. Then, switch to the Account tab and check the box under the YouTube preferences...  
 
 <div class="row">
@@ -222,7 +224,13 @@ To enable YouTube search, login to the webapp with your admin account. Then, swi
 
 If FFMPEG isn't in your global PATH, fill in the full path to the executable. Then tap "Test FFMPEG" to make sure it's working.
 
-Congrats! Now users can search YouTube for pre-made karaoke mixes.
+If you need to specify additional options to yt-dlp, you can add those under "Youtube-dl-exec options". If you're running the server from a data center or cloud provider, YouTube may block your IP address from downloading videos by default. In that case, you can try adding the `cookiesFromBrowser` option and setting it to `chrome` to use your Chrome browser's cookies to authenticate. This will require you to login to YouTube in Chrome on the same system as the server, which can be achieved by using a remote desktop app if necessary. Look into X11 forwarding on Linux.
+
+Congrats! Now users can search YouTube for pre-made karaoke mixes. If this isn't working, check the console logs for errors.
+
+### Updating YouTube Packages
+
+YouTube will frequently change things that will break searching and/or downloading. To fix this, run `npm run youtube-update` in the main folder of the code. This will update the related packages, and will download the latest version of `yt-dlp` to use for downloading videos.
 
 #### Automatic vocals removal and lyric alignment
 

@@ -30,7 +30,8 @@
     "server": "npm run serve",
     "start": "electron . -p 3000",
     "dist": "DEBUG=electron-builder:* electron-builder -c config/electron-builder.config.js",
-    "install-app-deps": "electron-builder install-app-deps"
+    "install-app-deps": "electron-builder install-app-deps",
+    "youtube-update": "npm update --ignore-scripts youtube-search-api youtube-dl-exec && npm run postinstall --prefix ./node_modules/youtube-dl-exec"
   },
   "files": [
     "assets/**",

@@ -10,7 +10,12 @@ You're looking at gazugafan's fork of Karaoke Forever, which includes the follow
 
 ## Getting started with the fork
 
-At a minimum, you'll need [Node.js](https://nodejs.org/en/) 12 or later and [FFMPEG](https://www.ffmpeg.org) installed. That's enough to download pre-made karaoke mixes from YouTube. Automatic karaoke mix generation requires a bit more technical setup.
+At a minimum, you'll need...
+* [Node.js](https://nodejs.org/en/) 18 or later
+* [FFMPEG](https://www.ffmpeg.org) installed somewhere
+* [Python](https://www.python.org) 3.9 or later installed and available in your PATH as `python3`. Python 3.10 or later is recommended and will likely be required soon by `yt-dlp`.
+
+That's enough to download pre-made karaoke mixes from YouTube. Automatic karaoke mix generation requires a bit more technical setup.
 
 This fork doesn't have any "release" on github. There's no single executable to download. Instead, you'll need to get the entire codebase. You can do that by clicking the "Code" button in the upper-right of github (probably on this page).
 
@@ -23,6 +28,12 @@ Congrats! My fork of Karaoke Forever should now be running. You should be able t
 ## Enabling YouTube Search
 
 With my fork running, login with your admin account, switch to the Account tab, and check the box under the YouTube preferences. You'll need FFMPEG installed. See https://github.com/gazugafan/karaoke-forever/blob/main/docs/content/docs/index.md#youtube-setup for more details.
+
+Videos will be downloaded using yt-dlp, which requires `python3` (version 3.9+) to be in your system PATH. If you need to specify additional options to yt-dlp, you can add those under "Youtube-dl-exec options". If you're running the server from a data center or cloud provider, YouTube may block your IP address from downloading videos by default. In that case, you can try adding the `cookiesFromBrowser` option and setting it to `chrome` to use your Chrome browser's cookies to authenticate. This will require you to login to YouTube in Chrome on the same system as the server, which can be achieved by using a remote desktop app if necessary. Look into X11 forwarding on Linux.
+
+## Updating YouTube Packages
+
+YouTube will frequently change things that will break searching and/or downloading. To fix this, run `npm run youtube-update` in the main folder of the code. This will update the related packages, and will download the latest version of `yt-dlp` to use for downloading videos.
 
 ## Automatic vocals removal and lyric alignment
 
