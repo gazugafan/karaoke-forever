@@ -158,10 +158,10 @@ router.post('/youtubeidentify', async (ctx, next) => {
   try {
     // search for this artist/title on Genius...
     const Client = new Genius.Client()
-    ctx.body.songs = await Client.songs.search(query)
+    let songs = await Client.songs.search(query)
 
     // remove circular references...
-    ctx.body.songs = await Promise.all(ctx.body.songs.map(async (song) => {
+    ctx.body.songs = await Promise.all(songs.map(async (song) => {
       const lyrics = await song.lyrics()
 
       return {
